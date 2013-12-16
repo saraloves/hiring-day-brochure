@@ -5,15 +5,17 @@
 <link href="http://www.appelsiini.net/stylesheets/main2.css" rel="stylesheet" type="text/css" />
 <script src="http://code.jquery.com/jquery-2.0.3.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
-<script src="//cdn.firebase.com/v0/firebase.js"></script>
-<script src="//cdn.firebase.com/v0/firebase-simple-login.js"></script>
+<script src="http://cdn.firebase.com/v0/firebase.js"></script>
+<script src="http://cdn.firebase.com/v0/firebase-simple-login.js"></script>
 <script type="text/javascript" charset="utf-8">
 
 
 $(function() {
 var userid = "test_username";
-var adRef = new Firebase('https://taehwanjo.firebaseio.com');
+var adRef = new Firebase('https://taehwanjo.firebaseio.com/' + userid);
 
+
+console.log(adRef);
 
   $(".editable_textarea").editable("save.php", { 
       indicator : "<img src='img/indicator.gif'>",
