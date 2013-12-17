@@ -5,8 +5,8 @@ var url = require('url');
 var path = require('path');
 var fs = require('fs');
 var Firebase = require('firebase');
-var userid = "test_username";
-var adRef = new Firebase('https://taehwanjo.firebaseio.com/brochure/' + userid);
+var username = "test_username";
+var adRef = new Firebase('https://taehwanjo.firebaseio.com/brochure/');
 
 console.log('serving static files from: ', __dirname);
 
@@ -22,10 +22,12 @@ app.post('/post/:section', function(req, res){
 app.post('/upload', function(req, res){ 
 	console.log(req.files);
 	fs.readFile(req.files.displayImage.path, function(err,data) {
-		var newPath = __dirname + "/public/imageuploads/" + userid;
+		var newPath = __dirname + "/public/imageuploads/" + username;
 		console.log('shit is gonna get saved to:', newPath);
-		fs.writeFile(newPath, data, function(err) {
-			res.redirect('back');
+		adRef.child('photo').set(1, function(){
+			fs.writeFile(newPath, data, function(err) { //this is callback INSIDE of firebase update
+				res.redirect('back');
+			});
 		});
 	});
 

@@ -11,19 +11,47 @@
 
 
 $(function() {
-  var userid = "test_username";
-  var adRef = new Firebase('https://taehwanjo.firebaseio.com/brochure/' + userid);
+  var username;
+  var adRef = new Firebase('https://taehwanjo.firebaseio.com/brochure');
+  var userRef;
 
   var auth = new FirebaseSimpleLogin(adRef, function(error, user) {
     if (error) {
       alert(error);
     } else if (user) {
       $('.loggedin').removeClass('hidden');
-      userid = user.username;
+      username = user.username;
+      console.log(username);
+
+      adRef.child(username).once('value', function(snapshot){
+        console.log('adRef CHILD saraloves snapshot val is: ', snapshot.val());
+        if (snapshot.val() === null) {
+          //create a new user object with blank fields
+          //(and then do work);
+          adRef.set(username, function(){
+            adRef.child(username).set({coding_insight: '', core: '', github: '', highlights: '', photo: '' })
+          });
+        } else {
+          //dowork() with username
+        }
+      });
+
+
+      // if (adRef.child(username).val()) {
+      //   console.log('the username ', username, ' exists in firebase');
+      // } else {
+      //   console.log('shit don\'t exist in firebase');
+      // }
+
+
+      console.log('userRef inside callback is:', userRef);
+      
+      doWork();
     } else {
       $('.loggedout').removeClass('hidden');
     }
   });
+  //login/logout logic 
 
   $('.login').on('click', function() {
     $('.loggedout').addClass('hidden');
@@ -40,19 +68,36 @@ $(function() {
 
   console.log(auth);
 
-
+  // if (adRef.child(photo)) { //obv psueo code
+  //   $('#studentpic').attr('src', 'someurlhere');
+  //   $('#studentpic').removeClass('hidden');
+  // } else {
+  //   $('#buttoncontainer').removeClass('hidden');
+  // }
   //ajax call asks server if image for this user id 
   //exists
 
-
-  console.log("adRef is: ", adRef);
+var doWork = function() {
+  console.log("userRef is: ", userRef);
   //console.log(adRef);
 
+//displaying data from database on screen
   adRef.on('value', function(snapshot) {
-    var highlights = snapshot.val().highlights;
+    console.log
+    var highlights = snapshot.getChild(username).val().highlights;
     var coding_insight = snapshot.val().coding_insight;
     var github = snapshot.val().github;
     var core = snapshot.val().core;
+    console.log(snapshot.val().photo);
+    //check to see if photo is saved in database, if it is, display, else, display upload button
+    if (snapshot.val().photo) {
+      $('#studentpic').attr('src', '/imageuploads/' + username);
+      $('#studentpic').removeClass('hidden');
+      $('#buttoncontainer').addClass('hidden');
+    } else {
+      $('#studentpic').addClass('hidden');
+      $('#buttoncontainer').removeClass('hidden');
+    }
     //var photo = snapshot.val().photo;
     $('#github').html(github);
     $('#highlights').html(highlights);
@@ -102,8 +147,9 @@ $(function() {
    });
 
   $(":file").change(function(){
-    $('.buttoncontainer').append('<input type="submit" class="upload" value="Upload"/>');
+    $('#buttoncontainer').append('<input type="submit" class="upload" value="Upload"/>');
   });
+};
 
 
 });
@@ -135,6 +181,10 @@ $(function() {
   display:none;
 }
 
+#studentpic {
+  height: 200px;
+}
+
 </style>
 
 </head>
@@ -153,10 +203,11 @@ $(function() {
 
     <h2>I'm so pretty</h2>
     <div>
-      <form action="/upload" class="buttoncontainer hidden" method="post", enctype="multipart/form-data">
+<!--     Asks for photo if photo doesn't exist, otherwise shows photo -->
+      <form action="/upload" id="buttoncontainer" class="hidden" method="post", enctype="multipart/form-data">
       <input type="file" name="displayImage" accept="image/*">
       </form>
-      <image class="hidden"></image>
+      <image id="studentpic" class="hidden"></image>
     <div>
 
     <h2>Highlights</h2>
