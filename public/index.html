@@ -11,93 +11,101 @@
 
 
 $(function() {
-var userid = "test_username";
-var adRef = new Firebase('https://taehwanjo.firebaseio.com/brochure/' + userid);
+  var userid = "test_username";
+  var adRef = new Firebase('https://taehwanjo.firebaseio.com/brochure/' + userid);
 
-
-console.log("adRef is: ", adRef);
-//console.log(adRef);
-
-adRef.on('value', function(snapshot) {
-  var highlights = snapshot.val().highlights;
-  var coding_insight = snapshot.val().coding_insight;
-  var github = snapshot.val().github;
-  var core = snapshot.val().core;
-  //var photo = snapshot.val().photo;
-  $('#github').html(github);
-  $('#highlights').html(highlights);
-  $('#coding_insight').html(coding_insight);
-  $('#core').html(core);
-  //$('#photo').html('<img src=' + photo + '></img>');
-});
-
-$("#highlights").editable("post/highlights", { 
-    indicator : "<img src='img/indicator.gif'>",
-    type   : 'textarea',
-    submitdata: { _method: "post" },
-    select : true,
-    submit : 'OK',
-    cancel : 'cancel',
-    cssclass : "editable"
- });
-
-$("#highlights").editable("post/highlights", { 
-    indicator : "<img src='img/indicator.gif'>",
-    type   : 'textarea',
-    submitdata: { _method: "post" },
-    select : true,
-    submit : 'OK',
-    cancel : 'cancel',
-    cssclass : "editable"
- });
-
-$("#coding_insight").editable("post/coding_insight", { 
-    indicator : "<img src='img/indicator.gif'>",
-    type   : 'textarea',
-    submitdata: { _method: "post" },
-    select : true,
-    submit : 'OK',
-    cancel : 'cancel',
-    cssclass : "editable"
- });
-
-$("#github").editable("post/github", { 
-    indicator : "<img src='img/indicator.gif'>",
-    type   : 'textarea',
-    submitdata: { _method: "post" },
-    select : true,
-    submit : 'OK',
-    cancel : 'cancel',
-    cssclass : "editable"
- });
-
-$(":file").change(function(){
-  $('.buttoncontainer').append('<input type="submit" class="upload" value="Upload"/>');
-
-  // var hobo = $('input[type="file"]').val();
-  // console.log(hobo);
-
-  // $(".upload").on('click', function(){
-  //   $.ajax({
-  //     url: "/imageupload",
-  //     type: 'POST',
-  //     processdata: false,
-  //     contentType: false,
-  //     data: {'file': hobo},
-  //     success: function(data) {
-  //       alert('shit got loaded');
-  //     }
-  //   });
-
-
-    // var fd = new FormData();
-    // fd.append('file', input.files[0]);
-
-    // console.log('fd: ', fd);
-    //console.log($(".file").val());
-    //var formData = new FormData($('form')[0]);
-    //console.log("formdata is", formData);
+  var auth = new FirebaseSimpleLogin(adRef, function(error, user) {
+    if (error) {
+      alert(error);
+    } else if (user) {
+      $('.loggedin').removeClass('hidden');
+      userid = user.username;
+    } else {
+      $('.loggedout').removeClass('hidden');
+    }
   });
+
+  $('.login').on('click', function() {
+    $('.loggedout').addClass('hidden');
+    auth.login('github', {
+      rememberMe: true,
+      scope: 'user: email'
+    });
+  });
+
+  $(".logout").on('click', function(){
+    $('.loggedin').addClass('hidden');
+    auth.logout();
+  });
+
+  console.log(auth);
+
+
+  //ajax call asks server if image for this user id 
+  //exists
+
+
+  console.log("adRef is: ", adRef);
+  //console.log(adRef);
+
+  adRef.on('value', function(snapshot) {
+    var highlights = snapshot.val().highlights;
+    var coding_insight = snapshot.val().coding_insight;
+    var github = snapshot.val().github;
+    var core = snapshot.val().core;
+    //var photo = snapshot.val().photo;
+    $('#github').html(github);
+    $('#highlights').html(highlights);
+    $('#coding_insight').html(coding_insight);
+    $('#core').html(core);
+    //$('#photo').html('<img src=' + photo + '></img>');
+  });
+
+  $("#highlights").editable("post/highlights", { 
+      indicator : "<img src='img/indicator.gif'>",
+      type   : 'textarea',
+      submitdata: { _method: "post" },
+      select : true,
+      submit : 'OK',
+      cancel : 'cancel',
+      cssclass : "editable"
+   });
+
+  $("#highlights").editable("post/highlights", { 
+      indicator : "<img src='img/indicator.gif'>",
+      type   : 'textarea',
+      submitdata: { _method: "post" },
+      select : true,
+      submit : 'OK',
+      cancel : 'cancel',
+      cssclass : "editable"
+   });
+
+  $("#coding_insight").editable("post/coding_insight", { 
+      indicator : "<img src='img/indicator.gif'>",
+      type   : 'textarea',
+      submitdata: { _method: "post" },
+      select : true,
+      submit : 'OK',
+      cancel : 'cancel',
+      cssclass : "editable"
+   });
+
+  $("#github").editable("post/github", { 
+      indicator : "<img src='img/indicator.gif'>",
+      type   : 'textarea',
+      submitdata: { _method: "post" },
+      select : true,
+      submit : 'OK',
+      cancel : 'cancel',
+      cssclass : "editable"
+   });
+
+  $(":file").change(function(){
+    $('.buttoncontainer').append('<input type="submit" class="upload" value="Upload"/>');
+  });
+
+
 });
 
 
@@ -123,6 +131,10 @@ $(":file").change(function(){
   font-weight: bold;
 }
 
+.hidden {
+  display:none;
+}
+
 </style>
 
 </head>
@@ -133,15 +145,19 @@ $(":file").change(function(){
         <h1>Student Brochure</h1><br />
       </p>
     </div>
+    <div class="loggedout hidden">Login
+      <button class="login">Log In</button>
+    </div>
       
-    <div class="entry">
+    <div class="loggedin hidden">
 
     <h2>I'm so pretty</h2>
-    
-    <form action="/upload" class="buttoncontainer" method="post", enctype="multipart/form-data">
-    <input type="file" name="displayImage" accept="image/*">
-    </form>
-    
+    <div>
+      <form action="/upload" class="buttoncontainer hidden" method="post", enctype="multipart/form-data">
+      <input type="file" name="displayImage" accept="image/*">
+      </form>
+      <image class="hidden"></image>
+    <div>
 
     <h2>Highlights</h2>
     
@@ -159,6 +175,7 @@ $(":file").change(function(){
     
     <p class="editable_textarea" id="core"></p>
 
+    <button class="logout">Log Out</button>
     
     </div>
 
