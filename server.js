@@ -5,7 +5,6 @@ var url = require('url');
 var path = require('path');
 var fs = require('fs');
 var Firebase = require('firebase');
-var username = "test_username";
 var adRef = new Firebase('https://taehwanjo.firebaseio.com/brochure/');
 
 console.log('serving static files from: ', __dirname);
@@ -15,20 +14,25 @@ app.use('/', express.static('public/', __dirname));
 
 app.use(express.bodyParser());
 
-app.post('/post/:section', function(req, res){
-	adRef.child(req.params.section).set(req.body.value);
+app.post('/post/:username/:section', function(req, res){
+	//req.params.section.split("/");
+	console.log("HELLOOOO~~~", req.params);
+	//console.log("adRef.child",adRef.child(req.params));
+	adRef.child(req.params.username).child(req.params.section).set(req.body.value);
 });
 
-app.post('/upload', function(req, res){ 
+app.post('/upload/:username', function(req, res){ 
 	console.log(req.files);
+	var username = req.params.username;
 	fs.readFile(req.files.displayImage.path, function(err,data) {
 		var newPath = __dirname + "/public/imageuploads/" + username;
 		console.log('shit is gonna get saved to:', newPath);
-		adRef.child('photo').set(1, function(){
+		adRef.child(username).child('photo').set(1, function(){
 			fs.writeFile(newPath, data, function(err) { //this is callback INSIDE of firebase update
 				res.redirect('back');
 			});
 		});
+
 	});
 
 	// var tempPath = ;

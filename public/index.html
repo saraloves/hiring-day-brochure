@@ -28,11 +28,15 @@ $(function() {
         if (snapshot.val() === null) {
           //create a new user object with blank fields
           //(and then do work);
-          adRef.set(username, function(){
-            adRef.child(username).set({coding_insight: '', core: '', github: '', highlights: '', photo: '' })
+          adRef.push(username, function(){
+            var defaultContent = "Click to edit";
+            adRef.child(username).set({coding_insight: defaultContent, core: "Javascript, Backbone.js, Angular.js, Node.js", github: defaultContent, highlights: defaultContent, photo: 0 });
+            userRef = adRef.child(username);
+            doWork();
           });
         } else {
-          //dowork() with username
+          userRef = adRef.child(username);
+          doWork();
         }
       });
 
@@ -46,7 +50,7 @@ $(function() {
 
       console.log('userRef inside callback is:', userRef);
       
-      doWork();
+      //doWork();
     } else {
       $('.loggedout').removeClass('hidden');
     }
@@ -79,12 +83,15 @@ $(function() {
 
 var doWork = function() {
   console.log("userRef is: ", userRef);
+  console.log("username is: ", username);
   //console.log(adRef);
 
 //displaying data from database on screen
-  adRef.on('value', function(snapshot) {
-    console.log
-    var highlights = snapshot.getChild(username).val().highlights;
+
+  $('#buttoncontainer').attr('action', "/upload/" + username);
+
+  userRef.on('value', function(snapshot) {
+    var highlights = snapshot.val().highlights;
     var coding_insight = snapshot.val().coding_insight;
     var github = snapshot.val().github;
     var core = snapshot.val().core;
@@ -106,7 +113,8 @@ var doWork = function() {
     //$('#photo').html('<img src=' + photo + '></img>');
   });
 
-  $("#highlights").editable("post/highlights", { 
+
+  $("#highlights").editable("post/"+ username + "/highlights", { 
       indicator : "<img src='img/indicator.gif'>",
       type   : 'textarea',
       submitdata: { _method: "post" },
@@ -116,7 +124,7 @@ var doWork = function() {
       cssclass : "editable"
    });
 
-  $("#highlights").editable("post/highlights", { 
+  $("#coding_insight").editable("post/" + username + "/coding_insight", { 
       indicator : "<img src='img/indicator.gif'>",
       type   : 'textarea',
       submitdata: { _method: "post" },
@@ -126,17 +134,7 @@ var doWork = function() {
       cssclass : "editable"
    });
 
-  $("#coding_insight").editable("post/coding_insight", { 
-      indicator : "<img src='img/indicator.gif'>",
-      type   : 'textarea',
-      submitdata: { _method: "post" },
-      select : true,
-      submit : 'OK',
-      cancel : 'cancel',
-      cssclass : "editable"
-   });
-
-  $("#github").editable("post/github", { 
+  $("#github").editable("post/" + username + "/github", { 
       indicator : "<img src='img/indicator.gif'>",
       type   : 'textarea',
       submitdata: { _method: "post" },
