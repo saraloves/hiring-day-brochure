@@ -1,0 +1,132 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Jeditable Edit In Place Demo</title>
+<link href="http://www.appelsiini.net/stylesheets/main2.css" rel="stylesheet" type="text/css" />
+<script src="http://code.jquery.com/jquery-2.0.3.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="http://www.appelsiini.net/download/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
+<script src="http://cdn.firebase.com/v0/firebase.js"></script>
+<script src="http://cdn.firebase.com/v0/firebase-simple-login.js"></script>
+<script type="text/javascript" charset="utf-8">
+
+
+$(function() {
+var userid = "test_username";
+var adRef = new Firebase('https://taehwanjo.firebaseio.com/brochure/' + userid);
+
+
+console.log("adRef is: ", adRef);
+//console.log(adRef);
+
+adRef.on('value', function(snapshot) {
+  var highlights = snapshot.val().highlights;
+  var coding_insight = snapshot.val().coding_insight;
+  var github = snapshot.val().github;
+  var core = snapshot.val().core;
+  var photo = snapshot.val().photo;
+  $('#github').html(github);
+  $('#highlights').html(highlights);
+  $('#coding_insight').html(coding_insight);
+  $('#core').html(core);
+  $('#photo').html('<img src=' + photo + '></img>');
+});
+
+$("#highlights").editable("post/highlights", { 
+    indicator : "<img src='img/indicator.gif'>",
+    type   : 'textarea',
+    submitdata: { _method: "post" },
+    select : true,
+    submit : 'OK',
+    cancel : 'cancel',
+    cssclass : "editable"
+ });
+
+$("#highlights").editable("post/highlights", { 
+    indicator : "<img src='img/indicator.gif'>",
+    type   : 'textarea',
+    submitdata: { _method: "post" },
+    select : true,
+    submit : 'OK',
+    cancel : 'cancel',
+    cssclass : "editable"
+ });
+
+$("#coding_insight").editable("post/coding_insight", { 
+    indicator : "<img src='img/indicator.gif'>",
+    type   : 'textarea',
+    submitdata: { _method: "post" },
+    select : true,
+    submit : 'OK',
+    cancel : 'cancel',
+    cssclass : "editable"
+ });
+
+$("#github").editable("post/github", { 
+    indicator : "<img src='img/indicator.gif'>",
+    type   : 'textarea',
+    submitdata: { _method: "post" },
+    select : true,
+    submit : 'OK',
+    cancel : 'cancel',
+    cssclass : "editable"
+ });
+
+});
+</script>
+
+<style type="text/css">
+#sidebar {
+  width: 0px;
+}
+
+#content {
+  width: 770px;
+}
+
+.editable input[type=submit] {
+  color: #F00;
+  font-weight: bold;
+}
+.editable input[type=button] {
+  color: #0F0;
+  font-weight: bold;
+}
+
+</style>
+
+</head>
+
+<body>
+    <div id="header">
+      <p>
+        <h1>Student Brochure</h1><br />
+      </p>
+    </div>
+      
+    <div class="entry">
+
+    <h2>I'm so pretty</h2>
+    
+    <p class="editable_textarea" id="photo"></p>
+
+    <h2>Highlights</h2>
+    
+    <p class="editable_textarea" id="highlights"></p>
+
+     <h2>Coding Insight</h2>
+    
+    <p class="editable_textarea" id="coding_insight"></p>
+
+    <h2>My Github</h2>
+    
+    <p class="editable_textarea" id="github"></p>
+
+     <h2>Core Curriculum</h2>
+    
+    <p class="editable_textarea" id="core"></p>
+
+    
+    </div>
+
+</body>
+</html>

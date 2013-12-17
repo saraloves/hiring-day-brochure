@@ -98,6 +98,29 @@ editing forms can be separate from the representation.
 
 
 
+firebase example...can it be this easy? 
+
+ var myDataRef = new Firebase('https://t6ewz69qxcv.firebaseio-demo.com/');
+      $('#messageInput').keypress(function (e) {
+        if (e.keyCode == 13) {
+          var name = $('#nameInput').val();
+          var text = $('#messageInput').val();
+          
+          myDataRef.push({name: name, text: text});
+          $('#messageInput').val('');
+          //this adds the data to the firebase db
+          //.push adds, .set overrides existing value
+        }
+      });
+      //callback function that listens for changes to the database
+      myDataRef.on('child_added', function(snapshot) {
+        displayChatMessage(message.name, message.text);
+      });
+
+      var displayChatMessage = function(){
+        jquery append to page
+      };
+
 
 
 
