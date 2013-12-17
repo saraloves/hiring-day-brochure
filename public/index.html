@@ -23,12 +23,12 @@ adRef.on('value', function(snapshot) {
   var coding_insight = snapshot.val().coding_insight;
   var github = snapshot.val().github;
   var core = snapshot.val().core;
-  var photo = snapshot.val().photo;
+  //var photo = snapshot.val().photo;
   $('#github').html(github);
   $('#highlights').html(highlights);
   $('#coding_insight').html(coding_insight);
   $('#core').html(core);
-  $('#photo').html('<img src=' + photo + '></img>');
+  //$('#photo').html('<img src=' + photo + '></img>');
 });
 
 $("#highlights").editable("post/highlights", { 
@@ -71,7 +71,38 @@ $("#github").editable("post/github", {
     cssclass : "editable"
  });
 
+$(":file").change(function(){
+  $('.buttoncontainer').append('<input type="submit" class="upload" value="Upload"/>');
+
+  // var hobo = $('input[type="file"]').val();
+  // console.log(hobo);
+
+  // $(".upload").on('click', function(){
+  //   $.ajax({
+  //     url: "/imageupload",
+  //     type: 'POST',
+  //     processdata: false,
+  //     contentType: false,
+  //     data: {'file': hobo},
+  //     success: function(data) {
+  //       alert('shit got loaded');
+  //     }
+  //   });
+
+
+    // var fd = new FormData();
+    // fd.append('file', input.files[0]);
+
+    // console.log('fd: ', fd);
+    //console.log($(".file").val());
+    //var formData = new FormData($('form')[0]);
+    //console.log("formdata is", formData);
+  });
 });
+
+
+
+//});
 </script>
 
 <style type="text/css">
@@ -107,7 +138,10 @@ $("#github").editable("post/github", {
 
     <h2>I'm so pretty</h2>
     
-    <p class="editable_textarea" id="photo"></p>
+    <form action="/upload" class="buttoncontainer" method="post", enctype="multipart/form-data">
+    <input type="file" name="displayImage" accept="image/*">
+    </form>
+    
 
     <h2>Highlights</h2>
     
