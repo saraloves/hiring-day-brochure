@@ -3,6 +3,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <title>Jeditable Edit In Place Demo</title>
 <link href="http://www.appelsiini.net/stylesheets/main2.css" rel="stylesheet" type="text/css" />
+<link href="styles.css" rel="stylesheet" type="text/css">
 <script src="http://code.jquery.com/jquery-2.0.3.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="http://www.appelsiini.net/download/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
 <script src="http://cdn.firebase.com/v0/firebase.js"></script>
@@ -30,7 +31,8 @@ $(function() {
           //(and then do work);
           adRef.push(username, function(){
             var defaultContent = "Click to edit";
-            adRef.child(username).set({coding_insight: defaultContent, core: "Javascript, Backbone.js, Angular.js, Node.js", github: defaultContent, highlights: defaultContent, photo: 0 });
+            var defaultName = "Click to enter your name"
+            adRef.child(username).set({fullname: "Click to enter your name", coding_insight: "Click to enter a quote about your personal coding philosophy or coding insight", core: "Javascript, Backbone.js, Angular.js, Node.js", github: "Click to enter your Github", highlights: "Click to enter a list of highlights from your HR experience", photo: 0 });
             userRef = adRef.child(username);
             doWork();
           });
@@ -68,6 +70,7 @@ $(function() {
   $(".logout").on('click', function(){
     $('.loggedin').addClass('hidden');
     auth.logout();
+    location.reload();
   });
 
   console.log(auth);
@@ -95,7 +98,8 @@ var doWork = function() {
     var coding_insight = snapshot.val().coding_insight;
     var github = snapshot.val().github;
     var core = snapshot.val().core;
-    console.log(snapshot.val().photo);
+    var fullname = snapshot.val().fullname;
+    console.log("Here is shit from the server", snapshot.val().fullname);
     //check to see if photo is saved in database, if it is, display, else, display upload button
     if (snapshot.val().photo) {
       $('#studentpic').attr('src', '/imageuploads/' + username);
@@ -110,8 +114,19 @@ var doWork = function() {
     $('#highlights').html(highlights);
     $('#coding_insight').html(coding_insight);
     $('#core').html(core);
+    $('#fullname').html(fullname);
     //$('#photo').html('<img src=' + photo + '></img>');
   });
+
+    $("#fullname").editable("post/"+ username + "/fullname", { 
+      indicator : "<img src='img/indicator.gif'>",
+      type   : 'textarea',
+      submitdata: { _method: "post" },
+      select : true,
+      submit : 'OK',
+      cancel : 'cancel',
+      cssclass : "editable"
+   });
 
 
   $("#highlights").editable("post/"+ username + "/highlights", { 
@@ -145,6 +160,8 @@ var doWork = function() {
    });
 
   $(":file").change(function(){
+    //$('#buttoncontainer').html('');
+    //console.log('file is changing');
     $('#buttoncontainer').append('<input type="submit" class="upload" value="Upload"/>');
   });
 };
@@ -157,34 +174,6 @@ var doWork = function() {
 //});
 </script>
 
-<style type="text/css">
-#sidebar {
-  width: 0px;
-}
-
-#content {
-  width: 770px;
-}
-
-.editable input[type=submit] {
-  color: #F00;
-  font-weight: bold;
-}
-.editable input[type=button] {
-  color: #0F0;
-  font-weight: bold;
-}
-
-.hidden {
-  display:none;
-}
-
-#studentpic {
-  height: 200px;
-}
-
-</style>
-
 </head>
 
 <body>
@@ -193,40 +182,58 @@ var doWork = function() {
         <h1>Student Brochure</h1><br />
       </p>
     </div>
-    <div class="loggedout hidden">Login
+    <div class="loggedout hidden">Log in with GitHub!
       <button class="login">Log In</button>
     </div>
       
-    <div class="loggedin hidden">
+    <div class="loggedin container hidden">
 
-    <h2>I'm so pretty</h2>
-    <div>
-<!--     Asks for photo if photo doesn't exist, otherwise shows photo -->
-      <form action="/upload" id="buttoncontainer" class="hidden" method="post", enctype="multipart/form-data">
-      <input type="file" name="displayImage" accept="image/*">
-      </form>
-      <image id="studentpic" class="hidden"></image>
-    <div>
+      <h2 class="name"><p class="editable_textarea name" id="fullname"></p></h2>
+      <div id="left">
+  <!--     Asks for photo if photo doesn't exist, otherwise shows photo -->
+        <form action="/upload" id="buttoncontainer" class="hidden" method="post", enctype="multipart/form-data">
+        <input type="file" name="displayImage" accept="image/*">
+        </form>
+        <image id="studentpic" class="hidden"></image>
 
-    <h2>Highlights</h2>
-    
-    <p class="editable_textarea" id="highlights"></p>
+      
+        <p class="editable_textarea" id="github"></p>
 
-     <h2>Coding Insight</h2>
-    
-    <p class="editable_textarea" id="coding_insight"></p>
+      </div>
+      <div id="right">
+        
+        <p class="editable_textarea" id="highlights"></p>
+        
+        <p class="editable_textarea" id="coding_insight"></p>
 
-    <h2>My Github</h2>
-    
-    <p class="editable_textarea" id="github"></p>
+        
+      </div>
+      <hr class="divider">
+      <div class="bottom">
 
-     <h2>Core Curriculum</h2>
-    
-    <p class="editable_textarea" id="core"></p>
-
-    <button class="logout">Log Out</button>
-    
+        <table>
+          <tr>
+            <td>
+              <h3 class="skills">Notable Experience: </h3>
+            </td>
+            <td>
+              <p class="editable_textarea" id="core">Node.js, backbone.js, blablablabla</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <h3 class="skills">Core Curriculum: </h3>
+            </td>
+            <td>
+              <p class="editable_textarea" id="core">Node.js, backbone.js, blablablabla</p>              
+            </td>
+          </tr>
+        </table>        
+                
+      </div>
     </div>
+    <button class="loggedin hidden logout">Log Out</button>
+   
 
 </body>
 </html>

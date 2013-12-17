@@ -1,0 +1,123 @@
+body {
+	height: 700px;
+}
+
+#sidebar {
+  width: 0px;
+}
+
+#content {
+  width: 770px;
+}
+
+.editable input[type=submit] {
+  color: #F00;
+  font-weight: bold;
+}
+.editable input[type=button] {
+  color: #0F0;
+  font-weight: bold;
+}
+
+.hidden {
+  display:none;
+}
+
+.container {
+	width: 1000px;
+    height: 500px;
+    position: relative;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #CCCCCC;
+    border-radius: 7px;
+    padding: 0px 10px 10px 10px;
+
+    margin: auto;
+}
+
+.bottomleft {
+	display: absolute;
+	text-align: right;
+}
+
+.bottomright {
+	display: absolute;
+}
+
+#studentpic {
+  height: 250px;
+  border-radius: 2px;
+
+}
+
+#coding_insight {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+#fullname {
+	display: block;
+	text-align: left;
+	padding-left: 10px;
+	color: #474747;
+}
+
+#left {
+	display: block;
+	text-align: left;
+	position: absolute;
+	width: 300px;
+	height: 300px;
+	left: 20px;
+	top: 60px;
+	z-index: 10;
+}
+
+#right {
+	display: block;
+	text-align: left;
+	position: absolute;
+	width: 550px;
+	height: 300px;
+	right: 35px;
+	top: 50px;
+	z-index: 10;
+}
+
+.skills {
+	text-align: right;
+}
+
+.bottom {
+	top: 389px;
+	left: 247px;
+	position:absolute;
+}
+
+.divider {
+	position: relative;
+	top: 349px;
+	display: block;
+	/*margin-right: 20px;*/
+	width: 980px;
+	height: 1px;
+	border: 0px;
+	background: #CCCCCC;
+}
+
+.name {
+	z-index: 11;
+	width: 900px;
+	position: absolute;
+}
+
+/*#github {
+	position: relative;
+	add z-index 10 to editable text areas highlights and coding_insight if this doesn't work
+}*/
+
