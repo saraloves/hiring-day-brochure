@@ -19,6 +19,17 @@ body {
   font-weight: bold;
 }
 
+#uploadbuttons {
+	position: absolute;
+	display: block;
+	background-color: white;
+	z-index: 20;
+	border: 1px solid;
+	border-color: #CCCCCC;
+	top: 215px;
+}
+
+
 .hidden {
   display:none;
 }
@@ -52,7 +63,9 @@ body {
 #studentpic {
   height: 250px;
   border-radius: 2px;
-
+  position: absolute;
+  top: 4px;
+  z-index: 5;
 }
 
 #coding_insight {
@@ -116,8 +129,28 @@ body {
 	position: absolute;
 }
 
-/*#github {
-	position: relative;
-	add z-index 10 to editable text areas highlights and coding_insight if this doesn't work
-}*/
+.giticon {
+	position: absolute;
+	height: 40px;
+	display: inline;
+	left: 10px;
+	top: 10px;
+}
+
+.githublink {
+	position: absolute;
+	display: block;
+	top: 245px;
+}
+
+#github {
+	position: absolute;
+	display: inline;
+	top: 12px;
+	left: 55px;
+}
+
+ul {
+	padding: 0px 15px;
+}
 

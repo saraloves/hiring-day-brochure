@@ -31,8 +31,11 @@ $(function() {
           //(and then do work);
           adRef.push(username, function(){
             var defaultContent = "Click to edit";
-            var defaultName = "Click to enter your name"
-            adRef.child(username).set({fullname: "Click to enter your name", coding_insight: "Click to enter a quote about your personal coding philosophy or coding insight", core: "Javascript, Backbone.js, Angular.js, Node.js", github: "Click to enter your Github", highlights: "Click to enter a list of highlights from your HR experience", photo: 0 });
+            var defaultName = "Click to enter your name";
+            var highlightText = "<ul><li>Please follow this format</li><li>To list out all the highlights</li><li>During your wonderful experience with Hack Reactor!</li><li>Please make it about this long</li><li>Ex: Learned programming by writing basic functions and FNUPlots to explore pathfinding via ant simulations.</li></ul>";
+            var codingText = "Please click here to write an awesome quote about your coding insights.  This is your opportunity to display not only your smarts, but also your personality!  Bloopity bloo bloo make it about this long.  Bloopity hoobity hooboo dooda faceplant.  Feel free to make it longer but it'll be way ugly.";
+
+            adRef.child(username).set({fullname: "Click to enter your name", coding_insight: codingText, core: "Javascript, Backbone.js, Angular.js, Node.js", github: "http://github.com/" + username, highlights: highlightText, photo: 0 });
             userRef = adRef.child(username);
             doWork();
           });
@@ -106,7 +109,9 @@ var doWork = function() {
       $('#studentpic').removeClass('hidden');
       $('#buttoncontainer').addClass('hidden');
     } else {
-      $('#studentpic').addClass('hidden');
+      console.log("no pic!");
+      $('#studentpic').attr('src', '/imageuploads/placeholder.png');
+      $('#studentpic').removeClass('hidden');
       $('#buttoncontainer').removeClass('hidden');
     }
     //var photo = snapshot.val().photo;
@@ -149,15 +154,15 @@ var doWork = function() {
       cssclass : "editable"
    });
 
-  $("#github").editable("post/" + username + "/github", { 
-      indicator : "<img src='img/indicator.gif'>",
-      type   : 'textarea',
-      submitdata: { _method: "post" },
-      select : true,
-      submit : 'OK',
-      cancel : 'cancel',
-      cssclass : "editable"
-   });
+  // $("#github").editable("post/" + username + "/github", { 
+  //     indicator : "<img src='img/indicator.gif'>",
+  //     type   : 'textarea',
+  //     submitdata: { _method: "post" },
+  //     select : true,
+  //     submit : 'OK',
+  //     cancel : 'cancel',
+  //     cssclass : "editable"
+  //  });
 
   $(":file").change(function(){
     //$('#buttoncontainer').html('');
@@ -191,13 +196,13 @@ var doWork = function() {
       <h2 class="name"><p class="editable_textarea name" id="fullname"></p></h2>
       <div id="left">
   <!--     Asks for photo if photo doesn't exist, otherwise shows photo -->
-        <form action="/upload" id="buttoncontainer" class="hidden" method="post", enctype="multipart/form-data">
+        <div id="uploadbuttons"><form action="/upload" id="buttoncontainer" class="hidden" method="post", enctype="multipart/form-data">
         <input type="file" name="displayImage" accept="image/*">
-        </form>
+        </form></div>
         <image id="studentpic" class="hidden"></image>
 
       
-        <p class="editable_textarea" id="github"></p>
+        <div class="githublink"><a href="http://www.github.com/" + username><img src="img/github-10-256.png" class="giticon"></img><p class="editable_textarea" id="github"></p></a></div>
 
       </div>
       <div id="right">
