@@ -43,9 +43,9 @@ $(function() {
             var defaultContent = "Click to edit";
             var defaultName = "Click to enter your name";
             var highlightText = "<ul><li>Please follow this format</li><li>To list out all the highlights</li><li>During your wonderful experience with Hack Reactor!</li><li>Please make it about this long</li><li>Ex: Learned programming by writing basic functions and FNUPlots to explore pathfinding via ant simulations.</li></ul>";
-            var codingText = "Please click here to write an awesome quote about your coding insights.  This is your opportunity to display not only your smarts, but also your personality!  Bloopity bloo bloo make it about this long.  Bloopity hoobity hooboo dooda faceplant.  Feel free to make it longer but it'll be way ugly.";
+            var codingText = "\"Please click here to write an awesome quote about your coding insights.  This is your opportunity to display not only your smarts, but also your personality! Feel free to make it longer but it'll be way ugly.\"";
 
-            adRef.child(username).set({fullname: "Click to enter your name", coding_insight: codingText, core: "Javascript, Backbone.js, Angular.js, Node.js", github: "http://github.com/" + username, highlights: highlightText, photo: 0 });
+            adRef.child(username).set({fullname: "Click to enter your name", coding_insight: codingText, core: "Javascript, Backbone.js, Angular.js, Node.js", notable_experience: "[]", github: "http://github.com/" + username, highlights: highlightText, photo: 0 });
             userRef = adRef.child(username);
             doWork();
           });
@@ -104,6 +104,63 @@ var doWork = function() {
 
 //displaying data from database on screen
 
+
+userRef.once('value', function(snapshot){
+   var notable = "";
+    console.log("Here is notable frmo server" + snapshot.val().notable_experience[0][0]);
+
+    var parsedNotable = JSON.parse(snapshot.val().notable_experience);
+
+    if (parsedNotable.length>0) {
+      var notableList = "";
+      for (var i = 0; i < parsedNotable.length; i++) {
+        notable += "<li>" + parsedNotable[i] + "</li>";
+      }
+
+      $('#notableexp').append(notable);
+    }
+/////////////////////////////////////////////////////////
+            var eventTags = $('#notableexp');
+
+            var addEvent = function(text) {
+              userRef.child('notable_experience').once('value', function(snapshot){
+                var notableArray = JSON.parse(snapshot.val());
+                notableArray.push(text);
+                userRef.child('notable_experience').set(JSON.stringify(notableArray));
+              });
+            };
+
+            var deleteEvent = function(text) {
+              userRef.child('notable_experience').once('value', function(snapshot){
+                var notableArray = JSON.parse(snapshot.val());
+                for (var i=0; i<notableArray.length; i++) {
+                  if(notableArray[i] === text){
+                    notableArray.splice(i, 1);
+                  }
+                }
+                userRef.child('notable_experience').set(JSON.stringify(notableArray));
+              });
+            };
+
+            eventTags.tagit({
+                availableTags: sampleTags,
+                afterTagAdded: function(evt, ui) {
+                    if (!ui.duringInitialization) {
+                        addEvent(eventTags.tagit('tagLabel', ui.tag));
+                    }
+                },
+                afterTagRemoved: function(evt, ui) {
+                    deleteEvent(eventTags.tagit('tagLabel', ui.tag));
+                }
+            });
+/////////////////////////////////////////////////////////
+
+    console.log(notable);
+
+});
+
+
+
   $('#buttoncontainer').attr('action', "/upload/" + username);
 
   userRef.on('value', function(snapshot) {
@@ -112,8 +169,9 @@ var doWork = function() {
     var github = snapshot.val().github;
     var core = snapshot.val().core;
     var fullname = snapshot.val().fullname;
-    console.log("Here is shit from the server", snapshot.val().fullname);
-    //check to see if photo is saved in database, if it is, display, else, display upload button
+     //check to see if photo is saved in database, if it is, display, else, display upload button
+
+
     if (snapshot.val().photo) {
       $('#studentpic').attr('src', '/imageuploads/' + username);
       $('#studentpic').removeClass('hidden');
@@ -192,7 +250,7 @@ var doWork = function() {
 
 
 
-
+//TODO:
             var sampleTags = ['c++', 'java', 'php', 'coldfusion', 'javascript', 'asp', 'ruby', 'python', 'c', 'scala', 'groovy', 'haskell', 'perl', 'erlang', 'apl', 'cobol', 'go', 'lua'];
 
 
@@ -207,48 +265,18 @@ var doWork = function() {
             });
 
 
-            $('#notableexp').tagit({
-                availableTags: sampleTags, // this param is of course optional. it's for autocomplete.
-                // configure the name of the input field (will be submitted with form), default: item[tags]
-                itemName: 'item',
-                fieldName: 'tags'
-            });
+            // $('#notableexp').tagit({
+            //     availableTags: sampleTags, // this param is of course optional. it's for autocomplete.
+            //     // configure the name of the input field (will be submitted with form), default: item[tags]
+            //     itemName: 'item',
+            //     fieldName: 'tags'
+            // });
 
 
             //-------------------------------
             // Tag events
             //-------------------------------
-            var eventTags = $('#eventTags');
 
-            var addEvent = function(text) {
-                $('#events_container').append(text + '<br>');
-            };
-
-            eventTags.tagit({
-                availableTags: sampleTags,
-                beforeTagAdded: function(evt, ui) {
-                    if (!ui.duringInitialization) {
-                        addEvent('beforeTagAdded: ' + eventTags.tagit('tagLabel', ui.tag));
-                    }
-                },
-                afterTagAdded: function(evt, ui) {
-                    if (!ui.duringInitialization) {
-                        addEvent('afterTagAdded: ' + eventTags.tagit('tagLabel', ui.tag));
-                    }
-                },
-                beforeTagRemoved: function(evt, ui) {
-                    addEvent('beforeTagRemoved: ' + eventTags.tagit('tagLabel', ui.tag));
-                },
-                afterTagRemoved: function(evt, ui) {
-                    addEvent('afterTagRemoved: ' + eventTags.tagit('tagLabel', ui.tag));
-                },
-                onTagClicked: function(evt, ui) {
-                    addEvent('onTagClicked: ' + eventTags.tagit('tagLabel', ui.tag));
-                },
-                onTagExists: function(evt, ui) {
-                    addEvent('onTagExists: ' + eventTags.tagit('tagLabel', ui.existingTag));
-                }
-            });
 
             //-------------------------------
             // Read-only
@@ -326,7 +354,7 @@ var doWork = function() {
               <h3 class="skills">Notable Experience: </h3>
             </td>
             <td>
-              <form>
+              <form id="notappend">                
                   <ul id="notableexp">
                   </ul>
               </form> 
