@@ -1,15 +1,25 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<title>Jeditable Edit In Place Demo</title>
+<title>Hack Reactor Hiring Day Brochure App</title>
 <link href="http://www.appelsiini.net/stylesheets/main2.css" rel="stylesheet" type="text/css" />
 <link href="styles.css" rel="stylesheet" type="text/css">
 <script src="http://code.jquery.com/jquery-2.0.3.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="http://www.appelsiini.net/download/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
 <script src="http://cdn.firebase.com/v0/firebase.js"></script>
 <script src="http://cdn.firebase.com/v0/firebase-simple-login.js"></script>
-<script type="text/javascript" charset="utf-8">
 
+<!-- tag it includes --> 
+
+  <link href="jquery.tagit.css" rel="stylesheet" type="text/css">
+  <link href="tagit.ui-zendesk.css" rel="stylesheet" type="text/css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="tag-it.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- end tag it includes -->
+
+
+<script type="text/javascript" charset="utf-8">
 
 $(function() {
   var username;
@@ -172,11 +182,105 @@ var doWork = function() {
 };
 
 
+
+////////////////////////////////////////////
+//SARA WANT SEPARATION
+////////////////////////////////////////////
+
+
+
+
+
+
+
+            var sampleTags = ['c++', 'java', 'php', 'coldfusion', 'javascript', 'asp', 'ruby', 'python', 'c', 'scala', 'groovy', 'haskell', 'perl', 'erlang', 'apl', 'cobol', 'go', 'lua'];
+
+
+            //-------------------------------
+            // Preloading data in markup
+            //-------------------------------
+            $('#corecurriculum').tagit({
+                availableTags: sampleTags, // this param is of course optional. it's for autocomplete.
+                // configure the name of the input field (will be submitted with form), default: item[tags]
+                itemName: 'item',
+                fieldName: 'tags'
+            });
+
+
+            $('#notableexp').tagit({
+                availableTags: sampleTags, // this param is of course optional. it's for autocomplete.
+                // configure the name of the input field (will be submitted with form), default: item[tags]
+                itemName: 'item',
+                fieldName: 'tags'
+            });
+
+
+            //-------------------------------
+            // Tag events
+            //-------------------------------
+            var eventTags = $('#eventTags');
+
+            var addEvent = function(text) {
+                $('#events_container').append(text + '<br>');
+            };
+
+            eventTags.tagit({
+                availableTags: sampleTags,
+                beforeTagAdded: function(evt, ui) {
+                    if (!ui.duringInitialization) {
+                        addEvent('beforeTagAdded: ' + eventTags.tagit('tagLabel', ui.tag));
+                    }
+                },
+                afterTagAdded: function(evt, ui) {
+                    if (!ui.duringInitialization) {
+                        addEvent('afterTagAdded: ' + eventTags.tagit('tagLabel', ui.tag));
+                    }
+                },
+                beforeTagRemoved: function(evt, ui) {
+                    addEvent('beforeTagRemoved: ' + eventTags.tagit('tagLabel', ui.tag));
+                },
+                afterTagRemoved: function(evt, ui) {
+                    addEvent('afterTagRemoved: ' + eventTags.tagit('tagLabel', ui.tag));
+                },
+                onTagClicked: function(evt, ui) {
+                    addEvent('onTagClicked: ' + eventTags.tagit('tagLabel', ui.tag));
+                },
+                onTagExists: function(evt, ui) {
+                    addEvent('onTagExists: ' + eventTags.tagit('tagLabel', ui.existingTag));
+                }
+            });
+
+            //-------------------------------
+            // Read-only
+            //-------------------------------
+            $('#readOnlyTags').tagit({
+                readOnly: true
+            });
+
+            //-------------------------------
+            // Tag-it methods
+            //-------------------------------
+            $('#methodTags').tagit({
+                availableTags: sampleTags
+            });
+
+            //-------------------------------
+            // Allow spaces without quotes.
+            //-------------------------------
+            $('#allowSpacesTags').tagit({
+                availableTags: sampleTags,
+                allowSpaces: true
+            });
+
+            //-------------------------------
+            // Remove confirmation
+            //-------------------------------
+            $('#removeConfirmationTags').tagit({
+                availableTags: sampleTags,
+                removeConfirmation: true
+            });
+          
 });
-
-
-
-//});
 </script>
 
 </head>
@@ -218,19 +322,38 @@ var doWork = function() {
 
         <table>
           <tr>
-            <td>
+            <td class="nowrap">
               <h3 class="skills">Notable Experience: </h3>
             </td>
             <td>
-              <p class="editable_textarea" id="core">Node.js, backbone.js, blablablabla</p>
+              <form>
+                  <ul id="notableexp">
+                  </ul>
+              </form> 
             </td>
           </tr>
           <tr>
-            <td>
+            <td class="nowrap">
               <h3 class="skills">Core Curriculum: </h3>
             </td>
             <td>
-              <p class="editable_textarea" id="core">Node.js, backbone.js, blablablabla</p>              
+              <form>
+                  <ul id="corecurriculum">
+                      <!-- Existing list items will be pre-added to the tags. -->
+                      <li>JavaScript</li>
+                      <li>jQuery</li>
+                      <li>Node.js</li>
+                      <li>MySQL</li>
+                      <li>MongoDB</li>
+                      <li>Backbone.js</li>
+                      <li>Angular.js</li>
+                      <li>Express</li>
+                      <li>Jasmine</li>
+                      <li>D3.js</li>
+                      <li>Mocha</li>
+                      <li>Git</li>
+                  </ul>
+              </form>              
             </td>
           </tr>
         </table>        

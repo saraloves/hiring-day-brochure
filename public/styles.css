@@ -51,16 +51,8 @@ body {
     margin: auto;
 }
 
-.bottomleft {
-	display: absolute;
-	text-align: right;
-}
-
-.bottomright {
-	display: absolute;
-}
-
 #studentpic {
+  width: 375px;
   height: 250px;
   border-radius: 2px;
   position: absolute;
@@ -107,8 +99,9 @@ body {
 }
 
 .bottom {
-	top: 389px;
-	left: 247px;
+	top: 367px;
+	left:  50px;
+	width: 900px;
 	position:absolute;
 }
 
@@ -129,6 +122,10 @@ body {
 	position: absolute;
 }
 
+.nowrap {
+	white-space: nowrap;
+}
+
 .giticon {
 	position: absolute;
 	height: 40px;
@@ -141,6 +138,7 @@ body {
 	position: absolute;
 	display: block;
 	top: 245px;
+	left: -13px;
 }
 
 #github {
