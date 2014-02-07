@@ -156,5 +156,12 @@ ul {
 	position: absolute;
 	right: 20px;
 	top: 20px;
+	background-color: #aaa;
+	border-style: none;
+	height: 30px;
+	width: 80px;
+	font-family: Arial;
+	font-size: 13px;
+	margin-top: 10px;
 }
 

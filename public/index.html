@@ -1,318 +1,21 @@
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<title>Hack Reactor Hiring Day Brochure App</title>
-<link href="http://www.appelsiini.net/stylesheets/main2.css" rel="stylesheet" type="text/css" />
-<link href="styles.css" rel="stylesheet" type="text/css">
-<script src="http://code.jquery.com/jquery-2.0.3.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="http://www.appelsiini.net/download/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
-<script src="http://cdn.firebase.com/v0/firebase.js"></script>
-<script src="http://cdn.firebase.com/v0/firebase-simple-login.js"></script>
-
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Hack Reactor Hiring Day Brochure App</title>
+  <link href="http://www.appelsiini.net/stylesheets/main2.css" rel="stylesheet" type="text/css" />
+  <link href="styles.css" rel="stylesheet" type="text/css">
+  <script src="http://code.jquery.com/jquery-2.0.3.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="http://www.appelsiini.net/download/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
+  <script src="http://cdn.firebase.com/v0/firebase.js"></script>
+  <script src="http://cdn.firebase.com/v0/firebase-simple-login.js"></script>
 <!-- tag it includes --> 
-
   <link href="jquery.tagit.css" rel="stylesheet" type="text/css">
   <link href="tagit.ui-zendesk.css" rel="stylesheet" type="text/css">
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
   <script src="tag-it.js" type="text/javascript" charset="utf-8"></script>
-
 <!-- end tag it includes -->
-
-
-<script type="text/javascript" charset="utf-8">
-
-$(function() {
-  var username;
-  var adRef = new Firebase('https://taehwanjo.firebaseio.com/brochure');
-  var userRef;
-
-  var auth = new FirebaseSimpleLogin(adRef, function(error, user) {
-    if (error) {
-      alert(error);
-    } else if (user) {
-      $('.loggedin').removeClass('hidden');
-      username = user.username;
-      console.log(username);
-
-      adRef.child(username).once('value', function(snapshot){
-        console.log('adRef CHILD saraloves snapshot val is: ', snapshot.val());
-        if (snapshot.val() === null) {
-          //create a new user object with blank fields
-          //(and then do work);
-          adRef.push(username, function(){
-            var defaultContent = "Click to edit";
-            var defaultName = "Click to enter your name";
-            var highlightText = "<ul><li>Please follow this format</li><li>To list out all the highlights</li><li>During your wonderful experience with Hack Reactor!</li><li>Please make it about this long</li><li>Ex: Learned programming by writing basic functions and FNUPlots to explore pathfinding via ant simulations.</li></ul>";
-            var codingText = "\"Please click here to write an awesome quote about your coding insights.  This is your opportunity to display not only your smarts, but also your personality! Feel free to make it longer but it'll be way ugly.\"";
-
-            adRef.child(username).set({fullname: "Click to enter your name", coding_insight: codingText, core: "Javascript, Backbone.js, Angular.js, Node.js", notable_experience: "[]", github: "http://github.com/" + username, highlights: highlightText, photo: 0 });
-            userRef = adRef.child(username);
-            doWork();
-          });
-        } else {
-          userRef = adRef.child(username);
-          doWork();
-        }
-      });
-
-
-      // if (adRef.child(username).val()) {
-      //   console.log('the username ', username, ' exists in firebase');
-      // } else {
-      //   console.log('shit don\'t exist in firebase');
-      // }
-
-
-      console.log('userRef inside callback is:', userRef);
-      
-      //doWork();
-    } else {
-      $('.loggedout').removeClass('hidden');
-    }
-  });
-  //login/logout logic 
-
-  $('.login').on('click', function() {
-    $('.loggedout').addClass('hidden');
-    auth.login('github', {
-      rememberMe: true,
-      scope: 'user: email'
-    });
-  });
-
-  $(".logout").on('click', function(){
-    $('.loggedin').addClass('hidden');
-    auth.logout();
-    location.reload();
-  });
-
-  console.log(auth);
-
-  // if (adRef.child(photo)) { //obv psueo code
-  //   $('#studentpic').attr('src', 'someurlhere');
-  //   $('#studentpic').removeClass('hidden');
-  // } else {
-  //   $('#buttoncontainer').removeClass('hidden');
-  // }
-  //ajax call asks server if image for this user id 
-  //exists
-
-var doWork = function() {
-  console.log("userRef is: ", userRef);
-  console.log("username is: ", username);
-  //console.log(adRef);
-
-//displaying data from database on screen
-
-
-userRef.once('value', function(snapshot){
-   var notable = "";
-    console.log("Here is notable frmo server" + snapshot.val().notable_experience[0][0]);
-
-    var parsedNotable = JSON.parse(snapshot.val().notable_experience);
-
-    if (parsedNotable.length>0) {
-      var notableList = "";
-      for (var i = 0; i < parsedNotable.length; i++) {
-        notable += "<li>" + parsedNotable[i] + "</li>";
-      }
-
-      $('#notableexp').append(notable);
-    }
-/////////////////////////////////////////////////////////
-            var eventTags = $('#notableexp');
-
-            var addEvent = function(text) {
-              userRef.child('notable_experience').once('value', function(snapshot){
-                var notableArray = JSON.parse(snapshot.val());
-                notableArray.push(text);
-                userRef.child('notable_experience').set(JSON.stringify(notableArray));
-              });
-            };
-
-            var deleteEvent = function(text) {
-              userRef.child('notable_experience').once('value', function(snapshot){
-                var notableArray = JSON.parse(snapshot.val());
-                for (var i=0; i<notableArray.length; i++) {
-                  if(notableArray[i] === text){
-                    notableArray.splice(i, 1);
-                  }
-                }
-                userRef.child('notable_experience').set(JSON.stringify(notableArray));
-              });
-            };
-
-            eventTags.tagit({
-                availableTags: sampleTags,
-                afterTagAdded: function(evt, ui) {
-                    if (!ui.duringInitialization) {
-                        addEvent(eventTags.tagit('tagLabel', ui.tag));
-                    }
-                },
-                afterTagRemoved: function(evt, ui) {
-                    deleteEvent(eventTags.tagit('tagLabel', ui.tag));
-                }
-            });
-/////////////////////////////////////////////////////////
-
-    console.log(notable);
-
-});
-
-
-
-  $('#buttoncontainer').attr('action', "/upload/" + username);
-
-  userRef.on('value', function(snapshot) {
-    var highlights = snapshot.val().highlights;
-    var coding_insight = snapshot.val().coding_insight;
-    var github = snapshot.val().github;
-    var core = snapshot.val().core;
-    var fullname = snapshot.val().fullname;
-     //check to see if photo is saved in database, if it is, display, else, display upload button
-
-
-    if (snapshot.val().photo) {
-      $('#studentpic').attr('src', '/imageuploads/' + username);
-      $('#studentpic').removeClass('hidden');
-      $('#buttoncontainer').addClass('hidden');
-    } else {
-      console.log("no pic!");
-      $('#studentpic').attr('src', '/imageuploads/placeholder.png');
-      $('#studentpic').removeClass('hidden');
-      $('#buttoncontainer').removeClass('hidden');
-    }
-    //var photo = snapshot.val().photo;
-    $('#github').html(github);
-    $('#highlights').html(highlights);
-    $('#coding_insight').html(coding_insight);
-    $('#core').html(core);
-    $('#fullname').html(fullname);
-    //$('#photo').html('<img src=' + photo + '></img>');
-  });
-
-    $("#fullname").editable("post/"+ username + "/fullname", { 
-      indicator : "<img src='img/indicator.gif'>",
-      type   : 'textarea',
-      submitdata: { _method: "post" },
-      select : true,
-      submit : 'OK',
-      cancel : 'cancel',
-      cssclass : "editable"
-   });
-
-
-  $("#highlights").editable("post/"+ username + "/highlights", { 
-      indicator : "<img src='img/indicator.gif'>",
-      type   : 'textarea',
-      submitdata: { _method: "post" },
-      select : true,
-      submit : 'OK',
-      cancel : 'cancel',
-      cssclass : "editable"
-   });
-
-  $("#coding_insight").editable("post/" + username + "/coding_insight", { 
-      indicator : "<img src='img/indicator.gif'>",
-      type   : 'textarea',
-      submitdata: { _method: "post" },
-      select : true,
-      submit : 'OK',
-      cancel : 'cancel',
-      cssclass : "editable"
-   });
-
-  // $("#github").editable("post/" + username + "/github", { 
-  //     indicator : "<img src='img/indicator.gif'>",
-  //     type   : 'textarea',
-  //     submitdata: { _method: "post" },
-  //     select : true,
-  //     submit : 'OK',
-  //     cancel : 'cancel',
-  //     cssclass : "editable"
-  //  });
-
-  $(":file").change(function(){
-    //$('#buttoncontainer').html('');
-    //console.log('file is changing');
-    $('#buttoncontainer').append('<input type="submit" class="upload" value="Upload"/>');
-  });
-};
-
-
-
-////////////////////////////////////////////
-//SARA WANT SEPARATION
-////////////////////////////////////////////
-
-
-
-
-
-
-//TODO:
-            var sampleTags = ['c++', 'java', 'php', 'coldfusion', 'javascript', 'asp', 'ruby', 'python', 'c', 'scala', 'groovy', 'haskell', 'perl', 'erlang', 'apl', 'cobol', 'go', 'lua'];
-
-
-            //-------------------------------
-            // Preloading data in markup
-            //-------------------------------
-            $('#corecurriculum').tagit({
-                availableTags: sampleTags, // this param is of course optional. it's for autocomplete.
-                // configure the name of the input field (will be submitted with form), default: item[tags]
-                itemName: 'item',
-                fieldName: 'tags'
-            });
-
-
-            // $('#notableexp').tagit({
-            //     availableTags: sampleTags, // this param is of course optional. it's for autocomplete.
-            //     // configure the name of the input field (will be submitted with form), default: item[tags]
-            //     itemName: 'item',
-            //     fieldName: 'tags'
-            // });
-
-
-            //-------------------------------
-            // Tag events
-            //-------------------------------
-
-
-            //-------------------------------
-            // Read-only
-            //-------------------------------
-            $('#readOnlyTags').tagit({
-                readOnly: true
-            });
-
-            //-------------------------------
-            // Tag-it methods
-            //-------------------------------
-            $('#methodTags').tagit({
-                availableTags: sampleTags
-            });
-
-            //-------------------------------
-            // Allow spaces without quotes.
-            //-------------------------------
-            $('#allowSpacesTags').tagit({
-                availableTags: sampleTags,
-                allowSpaces: true
-            });
-
-            //-------------------------------
-            // Remove confirmation
-            //-------------------------------
-            $('#removeConfirmationTags').tagit({
-                availableTags: sampleTags,
-                removeConfirmation: true
-            });
-          
-});
-</script>
-
+  <script type="text/javascript" charset="utf-8" src="app.js"></script>
 </head>
-
 <body>
     <div id="header">
       <p>
@@ -322,9 +25,7 @@ userRef.once('value', function(snapshot){
     <div class="loggedout hidden">Log in with GitHub!
       <button class="login">Log In</button>
     </div>
-      
     <div class="loggedin container hidden">
-
       <h2 class="name"><p class="editable_textarea name" id="fullname"></p></h2>
       <div id="left">
   <!--     Asks for photo if photo doesn't exist, otherwise shows photo -->
@@ -332,29 +33,21 @@ userRef.once('value', function(snapshot){
         <input type="file" name="displayImage" accept="image/*">
         </form></div>
         <image id="studentpic" class="hidden"></image>
-
-      
         <div class="githublink"><a href="http://www.github.com/" + username><img src="img/github-10-256.png" class="giticon"></img><p class="editable_textarea" id="github"></p></a></div>
-
       </div>
       <div id="right">
-        
         <p class="editable_textarea" id="highlights"></p>
-        
         <p class="editable_textarea" id="coding_insight"></p>
-
-        
       </div>
       <hr class="divider">
       <div class="bottom">
-
         <table>
           <tr>
             <td class="nowrap">
               <h3 class="skills">Notable Experience: </h3>
             </td>
             <td>
-              <form id="notappend">                
+              <form id="notappend">
                   <ul id="notableexp">
                   </ul>
               </form> 
@@ -381,15 +74,12 @@ userRef.once('value', function(snapshot){
                       <li>Mocha</li>
                       <li>Git</li>
                   </ul>
-              </form>              
+              </form>
             </td>
           </tr>
-        </table>        
-                
+        </table>
       </div>
     </div>
     <button class="loggedin hidden logout">Log Out</button>
-   
-
 </body>
 </html>
